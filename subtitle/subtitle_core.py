@@ -179,13 +179,10 @@ class WhisperPostProcessor:
 
                 # --- 调试打印 ---
                 # 如果 gap 比较大，或者包含了特定的词，打印出来看看
-                if gap > 0.1:
-                    # print(
-                    #     f"🔍 词间距检测: '{buffer[-1]['word']}' -> '{word_text}' | Gap: {gap:.3f}s | 阈值: {gap_threshold}s")
-                    pass
-
                 if gap >= gap_threshold:
-                    print(f"  ✂️ [切分成功] 因为 Gap {gap:.3f} >= {gap_threshold}")
+                    print(f"🔍 词间距检测: '{buffer[-1]['word']}' "
+                          "-> '{word_text}' | Gap: {gap:.3f}s | "
+                          "阈值: {gap_threshold}s")
                     commit_buffer()
                 # ----------------
 
@@ -215,7 +212,7 @@ class WhisperPostProcessor:
         return output
 
     @staticmethod
-    def merge_nearby(events: List[SubtitleEvent], max_gap: float = 0.25, max_dur: float = 7.0) -> List[SubtitleEvent]:
+    def merge_nearby(events: List[SubtitleEvent], max_gap: float = 0.1, max_dur: float = 7.0) -> List[SubtitleEvent]:
         """合并过碎的字幕"""
         if not events:
             return []
