@@ -126,9 +126,7 @@ Dialogue: 0,0:00:14.54,0:00:22.42,Karaoke,,0,0,0,,{\k82}最{\k58}高{\k254}の{\
 | 参数 | 默认值 | 说明 |
 | --- | --- | --- |
 | `input` | (必填) | 输入视频或音频文件路径 |
-| `--mode` | `anime` | **`anime`**: 对话模式 (合并短句，支持翻译)<br>
-
-<br>**`song`**: 歌曲模式 (逐字时间戳，LRC/Karaoke) |
+| `--mode` | `anime` | **`anime`**: 对话模式 (合并短句，支持翻译)<br>**`song`**: 歌曲模式 (逐字时间戳，LRC/Karaoke) |
 | `-m`, `--model` | `medium` | Whisper 模型大小 (tiny/base/small/medium/large/turbo) |
 | `--translate` | `False` | 是否启用 LLM 翻译 (仅 Anime 模式有效) |
 | `--api_key` | `None` | OpenAI API Key (也可通过环境变量 `OPENAI_API_KEY` 设置) |

@@ -27,12 +27,16 @@ class LyricWord:
 class LyricLine:
     """
     一行歌词（包含多个字）。
-    歌曲通常以行位单位，但内部需要保留字的粒度。
+    歌曲通常以行为单位，但内部需要保留字的粒度。
     """
     start: float
     end: float
     words: List[LyricWord] = field(default_factory=list)
     translation: str = ""  # 预留翻译字段
+
+    # 新增：控制输出模式 'bilingual' | 'zh' | 'jp'
+    # 默认双语
+    render_mode: str = "bilingual"
 
     def add_word(self, word: LyricWord):
         self.words.append(word)
@@ -151,12 +155,19 @@ class LRCExporter:
             for line in lines:
                 # 行开始时间
                 line_start_str = self._format_time(line.start)
-                f.write(f"[{line_start_str}]")
+                line_end_str = self._format_time(line.words[-1].end)
 
+                # 原文
+                f.write(f"[{line_start_str}]")
                 for word in line.words:
                     word_end_str = self._format_time(word.end)
                     f.write(f"{word.text}[{word_end_str}]")
+                f.write("\n")
 
+                # 翻译
+                if line.translation:
+                    f.write(
+                        f"[{line_start_str}]{line.translation}[{line_end_str}]")
                 f.write("\n")
 
     def _format_time(self, t: float) -> str:
@@ -178,13 +189,17 @@ class EnhancedLRCExporter:
             for line in lines:
                 # 行开始时间
                 line_start_str = self._format_time(line.start)
-                f.write(f"[{line_start_str}]")
 
+                # 原文
+                f.write(f"[{line_start_str}]")
                 for word in line.words:
-                    # 某些播放器使用 <mm:ss.xx> 表示该词的开始时间
                     word_start_str = self._format_time(word.start)
                     f.write(f"<{word_start_str}>{word.text}")
+                f.write("\n")
 
+                # 翻译
+                if line.translation:
+                    f.write(f"[{line_start_str}]{line.translation}")
                 f.write("\n")
 
     def _format_time(self, t: float) -> str:
@@ -243,4 +258,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     current_time = word.end
 
                 f.write(
-                    f"Dialogue: 0,{start_t},{end_t},Karaoke,,0,0,0,,{ass_text}\n")
+                    f"Dialogue: 0,{start_t},{end_t},Karaoke,,0,0,0,,{ass_text}\n"
+                    f"Dialogue: 0,{start_t},{end_t},Translate,,0,0,0,,{line.translation}\n"
+                )

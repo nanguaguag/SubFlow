@@ -128,8 +128,23 @@ def main():
 
         # 4. (预留) 翻译 - 暂时留空或仅做简单拷贝
         if args.translate:
-            print("⚠️ Translation for song mode is not yet implemented (Coming soon).")
-            # 未来在这里调用 translator，针对 LyricLine 进行翻译
+            api_key = args.api_key or os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                print("⚠️ Warning: No API Key provided. Skipping translation.")
+            else:
+                print(f"🤖 Translating via {args.gpt_model}")
+                print(f"→ Translation style: {args.sub_style})...")
+
+                translator = OpenAITranslator(
+                    api_key=api_key,
+                    base_url=args.base_url,
+                    model=args.gpt_model
+                )
+                # 执行翻译
+                translator.translate_LyricLine(lyric_lines)
+
+        for line in lyric_lines:
+            line.render_mode = args.sub_style
 
         # 5. 导出文件
         print("💾 Saving song subtitles...")
@@ -209,7 +224,7 @@ def main():
                 model=args.gpt_model
             )
             # 执行翻译
-            translator.translate_events(events)
+            translator.translate_subtitle(events)
 
     # 6. 设置字幕显示模式
     print(f"🎨 Applying subtitle style: {args.sub_style}")
